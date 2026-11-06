@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>白話字拼讀組合器</title>
+<title>白話字鼻母音與斷音練習器 李香恩</title>
 <style>
 :root{--bg:#faf8f4;--fg:#2b2a27;--mut:#77736a;--card:#fff;--line:#e2ddd2;--ac:#c2410c;--acbg:#fde8dc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 
@@ -1260,9 +1260,10 @@ $('autoSpeed').onclick=()=>{
         button.disabled?'請先選擇帶 p、t、k、h 斷音韻尾的母音或韻尾，才能選第 4、8 聲。':'';
       button.classList.toggle('on',active);button.setAttribute('aria-pressed',String(active));
     });
-    // 辭庫第四列複製列：只顯示在自己拼音／自動拼音三分類，和第三列實際狀態同步。
+    // 自己拼音維持三分類的第四列；自動拼音在「← 全部」模式也必須顯示完整符號列。
+    // 將符號列的 enabled/disabled 與選取狀態逐一同步至第三列按鈕。
     const copiedSymbolRow=$('symbolToneTabs');
-    copiedSymbolRow.hidden=!(manual||autoPage)||!['single','multi','focus'].includes(manualMode);
+    copiedSymbolRow.hidden=!(manual||autoPage)||(manual&&!['single','multi','focus'].includes(manualMode));
     for(const symbolButton of copiedSymbolRow.querySelectorAll('button[data-symbol-tone]')){
       const sourceButton=document.querySelector('#autoToneTabs button[data-auto-tone="'+symbolButton.dataset.symbolTone+'"]');
       if(!sourceButton)continue;
