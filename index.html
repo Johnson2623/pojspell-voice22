@@ -1043,11 +1043,11 @@ $('autoSpeed').onclick=()=>{
 /* 分頁模式以唯一的原始操作頁重用所有播放、變調及辭庫功能。
    不複製已有 id，也不更動 1999 筆辭庫、音檔索引或聲調算法。 */
 (function(){
-  // 每次啟動固定預選：鼻母音／第 1 音；兩列之後仍獨立記住選項。
-  let manualMode='single',autoToneFilter=1;
+  // 每次啟動固定預選：鼻母音／第 5 音；兩列之後仍獨立記住選項。
+  let manualMode='single',autoToneFilter=5;
   const manualStates={all:{...s}};
   const defaultManual={
-    single:{i:'p',v:'a',c:'ⁿ',t:1},
+    single:{i:'p',v:'oa',c:'ⁿ',t:5},
     multi:{i:'chh',v:'a',c:'p',t:4},
     focus:{i:'chh',v:'a',c:'p',t:8}
   };
@@ -1457,12 +1457,12 @@ $('autoSpeed').onclick=()=>{
     updateTabs();
   };
   updateCodaButtons();updateManualButtons();updateTabs();
-  // 啟動預設：自己拼音、鼻母音、第 1 音、子音 p、母音 a。
+  // 啟動預設：自己拼音、鼻母音、第 5 音、子音 p、母音 oa、鼻化 ⁿ。
   // 每次重新載入固定恢復預設值；不改變之後的頁面及選項記憶功能。
   $('autoSpeed').value='3';
-  s={i:'p',v:'a',c:'ⁿ',t:1};
+  s={i:'p',v:'oa',c:'ⁿ',t:5};
   manualMode='single';
-  autoToneFilter=1;
+  autoToneFilter=5;
   activateManualPage();
 })();
 </script>
