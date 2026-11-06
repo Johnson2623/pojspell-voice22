@@ -1248,8 +1248,12 @@ $('autoSpeed').onclick=()=>{
         $('tDictionary').classList.contains('on')?(manualMode==='multi'?4:manualMode==='focus'?8:null):null);
       const originalTone=tone==='all'?null:document.querySelector('#ton button[data-v="'+tone+'"]');
       const dictionaryAllModes=$('tDictionary').classList.contains('on') && manualMode==='all';
-      const disabledOnAutoOrDictionary=(autoPage || ($('tDictionary').classList.contains('on') && !dictionaryAllModes)) && (tone==='4'||tone==='8');
-      button.disabled=selectedStopTone!==null?(tone!==String(selectedStopTone)):Boolean(disabledOnAutoOrDictionary||(tone==='all'&&manual)||(manual&&originalTone&&originalTone.disabled));
+      const autoAllModes=autoPage && manualMode==='all';
+      // 自動拼音『← 全部』模式允許全部七調，包含第4、8音。
+      const disabledOnAutoOrDictionary=((autoPage && !autoAllModes) || ($('tDictionary').classList.contains('on') && !dictionaryAllModes)) && (tone==='4'||tone==='8');
+      // 自動拼音即使目前選擇第4／8調專用分類，第三列的『← 全部』仍可以切換至全調。
+      const autoExitStopMode=autoPage && tone==='all';
+      button.disabled=selectedStopTone!==null?(tone!==String(selectedStopTone) && !autoExitStopMode):Boolean(disabledOnAutoOrDictionary||(tone==='all'&&manual)||(manual&&originalTone&&originalTone.disabled));
       button.title=selectedStopTone!==null?(button.disabled?'本斷音分類只開放第 '+selectedStopTone+' 音。':'第 '+selectedStopTone+' 音（p／t／k／h 韻尾）可點選。'):
         disabledOnAutoOrDictionary?'本頁面第 4、8 音目前停用。':
         tone==='all'&&manual?'自己拼音頁面不能使用「← 全部」。':
@@ -1287,6 +1291,8 @@ $('autoSpeed').onclick=()=>{
    function isEligibleAutoDictionaryExample(entry){
       if(!entry)return false;
       if(manualMode==='single')return Boolean(nasalDictionaryParts(entry));
+      // 『← 全部』模式不排除鼻化韻、鼻音韻尾與第4、第8調，完整涵蓋辭庫七調。
+      if(manualMode==='all')return true;
       const vowel=String(entry.v||'');
       const coda=String(entry.c||'');
       // 斷音ptkh分類只播放第4調且有有效 p／t／k／h 的真實教育部例音。
@@ -1350,7 +1356,7 @@ $('autoSpeed').onclick=()=>{
     // 兩種斷音分類：陰入第4音，陽入第8音；離開時恢復其他分類原限制。
     if(mode==='multi')autoToneFilter=4;
     else if(mode==='focus')autoToneFilter=8;
-    else if(mode==='all'&&$('tDictionary').classList.contains('on'))autoToneFilter=null;
+    else if(mode==='all'&&($('tDictionary').classList.contains('on')||$('tAuto').classList.contains('on')))autoToneFilter=null;
     else if([4,8].includes(autoToneFilter))autoToneFilter=1;
     if($('t1').classList.contains('on')){
       s={...(manualStates[mode]||defaultManual[mode]||manualStates.all)};
@@ -1371,6 +1377,11 @@ $('autoSpeed').onclick=()=>{
     updateTabs();
   }
   function chooseAutoTone(tone){
+    if(tone===null && $('tAuto').classList.contains('on')){
+      // 第三列『← 全部』與第二列『← 全部』完全相同：回到全部分類、七調皆可選。
+      chooseManualMode('all');
+      return;
+    }
     if($('t1').classList.contains('on')&&tone!==null){
        // 手動斷音分類只允許自身第4或第8音，其餘聲調按鈕不可操作。
        if(manualMode==='multi' || manualMode==='focus'){
